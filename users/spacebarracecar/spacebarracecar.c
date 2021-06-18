@@ -57,6 +57,8 @@ void unreg_prev(void){
 }
 #endif
 
+bool mac = false;
+
 // Interrupt and times for Nav/Esc
 bool navesc = false;
 uint16_t navesc_timer = 0;
@@ -78,6 +80,22 @@ __attribute__((weak))
 void timer_timeout_keymap(void){
 }
 
+void persistent_default_layer_set(uint16_t default_layer) {
+  eeconfig_update_default_layer(1UL << default_layer);
+  default_layer_set(1UL << default_layer);
+}
+
+void keyboard_post_init_user(void) {
+  if (eeconfig_read_default_layer() == 1UL << _BASE){
+      mac = false;
+      esct = false;
+  } else {
+      mac = true;
+      esct = true;
+  }
+}
+
+// TODO hier eine methode vorschalten die den timer timeoutet und dann den keycode weiterleitet ähnlich wie von userspace zu keymap
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
   case CU_GAME:
@@ -87,11 +105,92 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     // allows keymap to execute further commands when CU_GAME is pressed, for example enabling a macro layer
     return process_record_keymap(keycode, record) && false;
-  case KC_LGUI:
+  case CU_EMO:
+    if (record->event.pressed){
+        timer_timeout();
+        if (mac) {
+            register_code(KC_LCMD);
+            register_code(KC_LCTL);
+            register_code(KC_SPC);
+            unregister_code(KC_SPC);
+            unregister_code(KC_LCTL);
+            unregister_code(KC_LCMD);
+        } else {
+            register_code(KC_LGUI);
+            register_code(KC_DOT);
+            unregister_code(KC_DOT);
+            unregister_code(KC_LGUI);
+        }
+    }
+    return false;
+  case CU_WINU:
+    if (record->event.pressed){
+        timer_timeout();
+        if (mac) {
+            register_code(KC_LCTL);
+            register_code(KC_UP);
+            unregister_code(KC_UP);
+            unregister_code(KC_LCTL);
+        } else {
+            register_code(KC_LGUI);
+            register_code(KC_UP);
+            unregister_code(KC_UP);
+            unregister_code(KC_LGUI);
+        }
+    }
+    return false;
+  case CU_WIND:
+    if (record->event.pressed){
+        timer_timeout();
+        if (mac) {
+            register_code(KC_LCTL);
+            register_code(KC_DOWN);
+            unregister_code(KC_DOWN);
+            unregister_code(KC_LCTL);
+        } else {
+            register_code(KC_LGUI);
+            register_code(KC_DOWN);
+            unregister_code(KC_DOWN);
+            unregister_code(KC_LGUI);
+        }
+    }
+    return false;
+  case CU_WINL:
+    if (record->event.pressed){
+        timer_timeout();
+        if (mac) {
+            register_code(KC_LCTL);
+            register_code(KC_LEFT);
+            unregister_code(KC_LEFT);
+            unregister_code(KC_LCTL);
+        } else {
+            register_code(KC_LGUI);
+            register_code(KC_LEFT);
+            unregister_code(KC_LEFT);
+            unregister_code(KC_LGUI);
+        }
+    }
+    return false;
+  case CU_WINR:
+    if (record->event.pressed){
+        timer_timeout();
+        if (mac) {
+            register_code(KC_LCTL);
+            register_code(KC_RIGHT);
+            unregister_code(KC_RIGHT);
+            unregister_code(KC_LCTL);
+        } else {
+            register_code(KC_LGUI);
+            register_code(KC_RIGHT);
+            unregister_code(KC_RIGHT);
+            register_code(KC_LGUI);
+        }
+    }
+    return false;
   case KC_RGUI:
     if (record->event.pressed)
       timer_timeout();
-    if (game)
+    if (game && !mac)
       return false;
     else
       return true;
@@ -215,13 +314,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if(record->event.pressed) {
       timer_timeout();
       if (lshift || rshift){
-        unregister_code(KC_LSFT);
-        register_code(KC_ALGR);
-        unregister_code(DE_PLUS);
-        register_code(DE_PLUS);
-        unregister_code(DE_PLUS);
-        unregister_code(KC_ALGR);
-        register_code(KC_LSFT);
+        if (mac) {
+            unregister_code(KC_LSFT);
+            register_code(KC_LALT);
+            unregister_code(KC_N);
+            register_code(KC_N);
+            unregister_code(KC_N);
+            unregister_code(KC_LALT);
+            register_code(KC_LSFT);
+            if (!esct) {
+                register_code(KC_SPC);
+                unregister_code(KC_SPC);
+            }
+        } else {
+            unregister_code(KC_LSFT);
+            register_code(KC_ALGR);
+            unregister_code(DE_PLUS);
+            register_code(DE_PLUS);
+            unregister_code(DE_PLUS);
+            unregister_code(KC_ALGR);
+            register_code(KC_LSFT);
+        }
       } else {
         register_code(KC_LSFT);
         unregister_code(DE_ACUT);
@@ -311,15 +424,99 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   case CU_EQL:
     SHIFT_SWITCH(DE_0, DE_PLUS)
   case CU_LBRC:
-    SHIFT_ALGR(DE_8, DE_7)
+    if (mac) {
+        SHIFT_ALGR(DE_5, DE_8)
+    } else {
+        SHIFT_ALGR(DE_8, DE_7)
+    }
   case CU_RBRC:
-    SHIFT_ALGR(DE_9, DE_0)
+    if (mac) {
+        SHIFT_ALGR(DE_6, DE_9)
+    } else {
+        SHIFT_ALGR(DE_9, DE_0)
+    }
+  case CU_LCBR:
+    if (mac) {
+        SHIFT_ALGR(DE_8, DE_8)
+    } else {
+        SHIFT_ALGR(DE_7, DE_7)
+    }
+  case CU_RCBR:
+    if (mac) {
+        SHIFT_ALGR(DE_9, DE_9)
+    } else {
+        SHIFT_ALGR(DE_0, DE_0)
+    }
   case CU_BSLS:
-    SHIFT_ALGR(DE_SS, DE_LESS)
+    if (mac) {
+        if (record->event.pressed) {
+        timer_timeout();
+        register_code(KC_ALGR);
+        if (lshift || rshift) {
+            unregister_code(KC_LSFT);
+            unregister_code(KC_7);
+            register_code(KC_7);
+            unregister_code(KC_7);
+            register_code(KC_LSFT);
+          } else {
+            register_code(KC_LSFT);
+            unregister_code(KC_7);
+            register_code(KC_7);
+            unregister_code(KC_7);
+            unregister_code(KC_LSFT);
+        }
+        unregister_code(KC_ALGR);
+        }
+        return false;
+    } else {
+        SHIFT_ALGR(DE_SS, DE_LESS)
+    }
   case CU_Z:
-    CTRL(DE_Z, KC_Z)
+    if (mac) {
+        CMD(DE_Z, KC_Z)
+    } else {
+        CTRL(DE_Z, KC_Z)
+    }
   case CU_Y:
-    CTRL(DE_Y, KC_Y)
+    if (mac) {
+        CMD(DE_Y, KC_Y)
+    } else {
+        CTRL(DE_Y, KC_Y)
+    }
+  case CU_TILD:
+    if (mac) {
+        if (record->event.pressed) {
+            timer_timeout();
+            unregister_code(KC_LSFT);
+            register_code(KC_LALT);
+            unregister_code(KC_N);
+            register_code(KC_N);
+            unregister_code(KC_N);
+            unregister_code(KC_LALT);
+            if (lshift || rshift) {
+                register_code(KC_LSFT);
+            }
+            if (!esct) {
+                register_code(KC_SPC);
+                unregister_code(KC_SPC);
+            }
+        }
+        return false;
+    } else {
+        SHIFT_ALGR(DE_PLUS, DE_PLUS)
+    }
+  case CU_AT:
+    if (mac) {
+        SHIFT_ALGR(KC_L, KC_L)
+    } else {
+        SHIFT_ALGR(DE_Q, DE_Q)
+    }
+  case CU_PIPE:
+    if (mac) {
+        SHIFT_ALGR(KC_7, KC_7)
+    } else {
+        SHIFT_ALGR(DE_LABK, DE_LABK)
+    }
   case KC_LCTL:
   case KC_RCTL:
     if(!record->event.pressed) {

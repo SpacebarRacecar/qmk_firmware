@@ -5,10 +5,14 @@
 #define RAISE MO(_RAISE)
 
 enum layers {
-  _BASE,
+  _MAC = FIRST_AFTER_BASE,
   _RAISE,
   _LOWER,
   _MUSICMODE
+};
+
+enum keycodes {
+  CU_SWOS = NEW_SAFE_RANGE,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -29,23 +33,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TAB,   DE_Q,     DE_W,     DE_E,     DE_R,     DE_T,     CU_Z,     DE_U,     DE_I,     DE_O,     DE_P,     KC_BSPC,
   CU_NAV,   DE_A,     DE_S,     DE_D,     DE_F,     DE_G,     DE_H,     DE_J,     DE_K,     DE_L,     CU_SCLN,  CU_QUOT,
   CU_LSFT,  CU_Y,     DE_X,     DE_C,     DE_V,     DE_B,     DE_N,     DE_M,     CU_COMM,  CU_DOT,   CU_SLSH,  CU_RSFT,
-  KC_LCTL,  XXXXXXX,  KC_LGUI,  KC_LALT,  LOWER,    KC_SPC,   CTLENT,   RAISE,    KC_RALT,  KC_RGUI,  KC_APP,   KC_RCTL
+  KC_LCTL,  XXXXXXX,  KC_LGUI,  KC_LALT,  LOWER,    KC_SPC,   CTLENT,   RAISE,    KC_ALGR,  KC_RGUI,  KC_MENU,  KC_RCTL
 ),
 
+[_MAC] = LAYOUT_ortho(
+  KC_TAB,   DE_Q,     DE_W,     DE_E,     DE_R,     DE_T,     CU_Z,     DE_U,     DE_I,     DE_O,     DE_P,     KC_BSPC,
+  CU_NAV,   DE_A,     DE_S,     DE_D,     DE_F,     DE_G,     DE_H,     DE_J,     DE_K,     DE_L,     CU_SCLN,  CU_QUOT,
+  CU_LSFT,  CU_Y,     DE_X,     DE_C,     DE_V,     DE_B,     DE_N,     DE_M,     CU_COMM,  CU_DOT,   CU_SLSH,  CU_RSFT,
+  KC_LCMD,  KC_LCTL,  KC_LGUI,  KC_LALT,  LOWER,    KC_SPC,   CMDENT,   RAISE,    KC_ALGR,  KC_RGUI,  KC_RCTL,  KC_RCMD
+),
 /* Lower
 ,-----------------------------------------------------------------------------------------------------------------------.
 |~        |!        |"        |#        |$        |%        |^        |&        |*        |(        |)        |         |
 |---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
-|         |@        |Strg+X   |Strg+C   |Strg+V   |         |         |_        |+        |{        |}        ||        |
+|         |@        |         |         |         |         |         |_        |+        |{        |}        ||        |
 |---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
-|         |?        |         |         |         |         |         |         |         |         |         |         |
+|         |€        |         |         |         |         |         |         |         |         |         |         |
 |---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
 |         |         |         |         |         |         |         |         |         |         |         |         |
 `-----------------------------------------------------------------------------------------------------------------------'
 */
 [_LOWER] = LAYOUT_ortho(
-  DE_TILD,  DE_EXLM,  DE_DQOT,  DE_HASH,  DE_DLR,   DE_PERC,  CU_CIRC,  DE_AMPR,  DE_ASTR,  DE_LPRN,  DE_RPRN,  _______,
-  _______,  DE_AT,    CTRLX,    CTRLC,    CTRLV,    XXXXXXX,  XXXXXXX,  DE_UNDS,  DE_PLUS,  DE_LCBR,  DE_RCBR,  DE_PIPE,
+  CU_TILD,  DE_EXLM,  DE_DQOT,  DE_HASH,  DE_DLR,   DE_PERC,  CU_CIRC,  DE_AMPR,  DE_ASTR,  DE_LPRN,  DE_RPRN,  _______,
+  _______,  CU_AT,    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  DE_UNDS,  DE_PLUS,  CU_LCBR,  CU_RCBR,  CU_PIPE,
   _______,  DE_EURO,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  DE_MINS,  CU_EQL,   CU_LBRC,  CU_RBRC,  _______,
   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______
 ),
@@ -85,26 +95,26 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TAB,   CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_UE,    CU_ED,    CU_OE,    CU_ED,    KC_BSPC,
   CU_NAV,   CU_AE,    CU_SS,    CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_DDQ,
   CU_LSFT,  CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_ED,    CU_RSFT,
-  KC_LCTL,  XXXXXXX,  KC_LGUI,  KC_LALT,  LOWER,    CU_DDQ,   CU_DDQ,   RAISE,    KC_RALT,  KC_RGUI,  KC_APP,   KC_RCTL
+  _______,  _______,  _______,  _______,  _______,  CU_DDQ,   CU_DDQ,   _______,  _______,  _______,  _______,  _______
 ),
 
 /* Navigation
 ,-----------------------------------------------------------------------------------------------------------------------.
-|ALT F4   |PageDown |Up       |PageUp   |Home     |         |         |         |Win+Up   |         |         |Del      |
+|         |PageDown |Up       |PageUp   |Home     |         |         |         |Win+Up   |         |         |Del      |
 |---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
 |         |Left     |Down     |Right    |End      |         |         |Win+Left |Win+Down |Win+Right|         |Enter    |
 |---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
 |         |Prev     |Pause    |Next     |LowerVol |RaiseVol |Mute     |         |         |         |         |         |
 |---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
-|RESET    |ESCT     |         |         |         |         |         |         |         |         |         |Game     |
+|RESET    |ESCT     |SWOS     |         |         |         |         |         |         |         |         |Game     |
 `-----------------------------------------------------------------------------------------------------------------------'
 */
 
 [_NAV] = LAYOUT_ortho(
-  _______,  KC_PGDN,  KC_UP,    KC_PGUP,  KC_HOME,  XXXXXXX,  XXXXXXX,  XXXXXXX,  GUIU,     XXXXXXX,  XXXXXXX,  KC_DEL,
-  _______,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_END,   XXXXXXX,  XXXXXXX,  GUIL,     GUID,     GUIR,     EMOJI,   KC_ENT,
+  _______,  KC_PGDN,  KC_UP,    KC_PGUP,  KC_HOME,  XXXXXXX,  KC_BRIU,  XXXXXXX,  CU_WINU,  XXXXXXX,  XXXXXXX,  KC_DEL,
+  _______,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_END,   XXXXXXX,  KC_BRID,  CU_WINL,  CU_WIND,  CU_WINR,  CU_EMO,   KC_ENT,
   _______,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_VOLD,  KC_VOLU,  KC_MUTE,  RGB_TOG,  RGB_MOD,  RGB_HUI,  CU_RGBV,  _______,
-  RESET,    CU_ESCT,  ALTF4,    _______,  _______,  KC_SPC,   CTLENT,   RGB_M_P,  _______,  _______,  _______,  CU_GAME
+  RESET,    CU_ESCT,  CU_SWOS,  _______,  _______,  KC_SPC,   CTLENT,   RGB_M_P,  _______,  _______,  _______,  CU_GAME
 )
 
 };
@@ -133,7 +143,21 @@ switch (keycode) {
     } else {
       return true;
     }
+  case CU_SWOS:
+    if (record->event.pressed){
+        if (eeconfig_read_default_layer() == 1UL << _BASE) {
+            persistent_default_layer_set(_MAC);
+            mac = true;
+            esct = true;
+        } else {
+            persistent_default_layer_set(_BASE);
+            mac = false;
+            esct = false;
+        }
+    }
+    return false;
   default:
     return true;
   }
 }
+

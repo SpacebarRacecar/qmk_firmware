@@ -4,6 +4,8 @@
 #include "keymap_german.h"
 
 enum userspace_layers {
+  _BASE,
+  FIRST_AFTER_BASE,
   _DEADKEY = 14,            // Change if more than 16 layers are required
   _NAV
 };
@@ -12,8 +14,14 @@ enum userspace_custom_keycodes {
   CU_GAME = SAFE_RANGE,     // Toggle game mode on/off
   CU_NAV,                   // NAV | ESC
   KC_P00,                   // Numpad double zero
+  CU_WINU,
+  CU_WIND,
+  CU_WINL,
+  CU_WINR,
+  CU_EMO,
 
   #ifdef GERMAN_ENABLE
+  // also mac compatible
   CU_LSFT,                  // LSFT | (
   CU_RSFT,                  // LSFT | )
   CU_COMM,                  // , | <
@@ -43,6 +51,13 @@ enum userspace_custom_keycodes {
   CU_SS,                    // ß
   CU_DDQ,                   // "
   CU_ED,                    // Escape deadkey layer
+
+  CU_TILD,
+  CU_AT,
+  CU_LCBR,
+  CU_RCBR,
+  CU_PIPE,
+
   #endif
 
   #ifdef RGBLIGHT_ENABLE
@@ -68,6 +83,8 @@ void unreg_prev(void);
 extern bool esct;
 #endif
 
+extern bool mac;
+
 extern bool navesc;
 extern uint16_t navesc_timer;
 
@@ -77,11 +94,17 @@ void timer_timeout(void);
 
 void timer_timeout_keymap(void);
 
+void persistent_default_layer_set(uint16_t default_layer);
+
 bool process_record_keymap(uint16_t keycode, keyrecord_t *record);
 
 #define CTRLX LCTL(KC_X)
 #define CTRLC LCTL(KC_C)
 #define CTRLV LCTL(KC_V)
+
+#define CMDX LCMD(KC_X)
+#define CMDC LCMD(KC_C)
+#define CMDV LCMD(KC_V)
 
 #define ALTF4 LALT(KC_F4)
 
@@ -91,8 +114,7 @@ bool process_record_keymap(uint16_t keycode, keyrecord_t *record);
 #define GUIR RGUI(KC_RIGHT)
 
 #define CTLENT CTL_T(KC_ENT)
-
-#define EMOJI LWIN(KC_DOT)
+#define CMDENT CMD_T(KC_ENT)
 
 /*
 Templates for Keys, with custom shifted and non shifted Characters
@@ -193,7 +215,7 @@ if (record->event.pressed) { \
 } \
 return false;
 
-// Always AltGr
+// Always AltGr without shift
 #define SHIFT_ALGR(kc1, kc2) \
 if (record->event.pressed) { \
   timer_timeout(); \
@@ -213,6 +235,26 @@ if (record->event.pressed) { \
 } \
 return false;
 
+// Always AltGr with normal shift
+#define SHIFT_ALGR_NORM(kc1, kc2) \
+if (record->event.pressed) { \
+  timer_timeout(); \
+  register_code(KC_ALGR); \
+  if (lshift || rshift) { \
+    register_code(KC_LSFT); \
+    unregister_code(kc2); \
+    register_code(kc2); \
+    unregister_code(kc2); \
+  } else { \
+    unregister_code(KC_LSFT); \
+    unregister_code(kc1); \
+    register_code(kc1); \
+    unregister_code(kc1); \
+  } \
+  unregister_code(KC_ALGR); \
+} \
+return false;
+
 // Different keycode when Ctrl is pressed
 #define CTRL(kc1, kc2) \
 if(record->event.pressed) { \
@@ -222,6 +264,25 @@ if(record->event.pressed) { \
   else \
     unregister_code(KC_LSFT); \
   if (keyboard_report->mods & (MOD_BIT(KC_LCTL) | MOD_BIT(KC_RCTL))){ \
+    register_code(kc2); \
+  } else { \
+    register_code(kc1); \
+  } \
+} else { \
+    unregister_code(kc1); \
+    unregister_code(kc2); \
+} \
+return false;
+
+// Different keycode when CMD is pressed
+#define CMD(kc1, kc2) \
+if(record->event.pressed) { \
+  timer_timeout(); \
+  if (lshift || rshift) \
+    register_code(KC_LSFT); \
+  else \
+    unregister_code(KC_LSFT); \
+  if (keyboard_report->mods & (MOD_BIT(KC_LCMD) | MOD_BIT(KC_RCMD))){ \
     register_code(kc2); \
   } else { \
     register_code(kc1); \
