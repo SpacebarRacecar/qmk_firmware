@@ -88,10 +88,8 @@ void persistent_default_layer_set(uint16_t default_layer) {
 void keyboard_post_init_user(void) {
   if (eeconfig_read_default_layer() == 1UL << _BASE){
       mac = false;
-      esct = false;
   } else {
       mac = true;
-      esct = true;
   }
 }
 
