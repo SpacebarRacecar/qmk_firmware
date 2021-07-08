@@ -111,8 +111,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 */
 
 [_NAV] = LAYOUT_ortho(
-  _______,  KC_PGDN,  KC_UP,    KC_PGUP,  KC_HOME,  XXXXXXX,  KC_BRIU,  XXXXXXX,  CU_WINU,  XXXXXXX,  XXXXXXX,  KC_DEL,
-  _______,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_END,   XXXXXXX,  KC_BRID,  CU_WINL,  CU_WIND,  CU_WINR,  CU_EMO,   KC_ENT,
+  _______,  KC_PGDN,  KC_UP,    KC_PGUP,  CU_HOME,  XXXXXXX,  KC_BRIU,  XXXXXXX,  CU_WINU,  XXXXXXX,  XXXXXXX,  KC_DEL,
+  _______,  KC_LEFT,  KC_DOWN,  KC_RGHT,  CU_END,   XXXXXXX,  KC_BRID,  CU_WINL,  CU_WIND,  CU_WINR,  CU_EMO,   KC_ENT,
   _______,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_VOLD,  KC_VOLU,  KC_MUTE,  RGB_TOG,  RGB_MOD,  RGB_HUI,  CU_RGBV,  _______,
   RESET,    CU_ESCT,  CU_SWOS,  _______,  _______,  KC_SPC,   CTLENT,   RGB_M_P,  _______,  _______,  _______,  CU_GAME
 )

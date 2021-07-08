@@ -19,6 +19,8 @@ enum userspace_custom_keycodes {
   CU_WINL,
   CU_WINR,
   CU_EMO,
+  CU_HOME,
+  CU_END,
 
   #ifdef GERMAN_ENABLE
   // also mac compatible

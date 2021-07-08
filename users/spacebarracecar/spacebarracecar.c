@@ -185,6 +185,34 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
     }
     return false;
+  case CU_HOME:
+    if (record->event.pressed){
+        timer_timeout();
+        if (mac) {
+            register_code(KC_LCMD);
+            register_code(KC_LEFT);
+            unregister_code(KC_LEFT);
+            unregister_code(KC_LCMD);
+        } else {
+            register_code(KC_HOME);
+            unregister_code(KC_HOME);
+        }
+    }
+    return false;
+  case CU_END:
+    if (record->event.pressed){
+        timer_timeout();
+        if (mac) {
+            register_code(KC_LCMD);
+            register_code(KC_RIGHT);
+            unregister_code(KC_RIGHT);
+            unregister_code(KC_LCMD);
+        } else {
+            register_code(KC_END);
+            unregister_code(KC_END);
+        }
+    }
+    return false;
   case KC_RGUI:
     if (record->event.pressed)
       timer_timeout();
